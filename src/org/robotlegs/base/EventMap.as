@@ -7,9 +7,10 @@
 
 package org.robotlegs.base
 {
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	
+	import org.apache.royale.events.Event;
+	import org.apache.royale.events.EventDispatcher;
+	import org.apache.royale.events.IEventDispatcher;
+
 	import org.robotlegs.core.IEventMap;
 	
 	/**
@@ -43,7 +44,7 @@ package org.robotlegs.base
 		 */
 		public function EventMap(eventDispatcher:IEventDispatcher)
 		{
-			listeners = new Array();
+			listeners = [];
 			this.eventDispatcher = eventDispatcher;
 		}
 		

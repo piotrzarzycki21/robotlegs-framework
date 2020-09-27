@@ -8,7 +8,7 @@
 package org.robotlegs.base
 {
 	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
+	import org.apache.royale.events.Event;
 
 	import org.robotlegs.core.IInjector;
 

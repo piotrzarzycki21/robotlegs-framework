@@ -27,3 +27,4 @@ user.properties
 *.iml
 *.ipr
 *.iws
+target/

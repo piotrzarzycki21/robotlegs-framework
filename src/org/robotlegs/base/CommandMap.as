@@ -7,9 +7,9 @@
 
 package org.robotlegs.base
 {
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.Dictionary;
+	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;
+
 	import flash.utils.describeType;
 	
 	import org.robotlegs.core.ICommandMap;
@@ -41,16 +41,16 @@ package org.robotlegs.base
 		 *
 		 * TODO: This needs to be documented
 		 */
-		protected var eventTypeMap:Dictionary;
+		protected var eventTypeMap:Object;
 		
 		/**
 		 * Internal
 		 *
 		 * Collection of command classes that have been verified to implement an <code>execute</code> method
 		 */
-		protected var verifiedCommandClasses:Dictionary;
+		protected var verifiedCommandClasses:Object;
 		
-		protected var detainedCommands:Dictionary;
+		protected var detainedCommands:Object;
 		
 		//---------------------------------------------------------------------
 		//  Constructor
@@ -68,9 +68,9 @@ package org.robotlegs.base
 			this.eventDispatcher = eventDispatcher;
 			this.injector = injector;
 			this.reflector = reflector;
-			this.eventTypeMap = new Dictionary(false);
-			this.verifiedCommandClasses = new Dictionary(false);
-			this.detainedCommands = new Dictionary(false);
+			this.eventTypeMap = {};
+			this.verifiedCommandClasses = {};
+			this.detainedCommands = {};
 		}
 		
 		//---------------------------------------------------------------------
@@ -85,9 +85,9 @@ package org.robotlegs.base
 			verifyCommandClass(commandClass);
 			eventClass = eventClass || Event;
 			
-			var eventClassMap:Dictionary = eventTypeMap[eventType] ||= new Dictionary(false);
+			var eventClassMap:Object = eventTypeMap[eventType] ||= {};
 				
-			var callbacksByCommandClass:Dictionary = eventClassMap[eventClass] ||= new Dictionary(false);
+			var callbacksByCommandClass:Object = eventClassMap[eventClass] ||= {};
 				
 			if (callbacksByCommandClass[commandClass] != null)
 			{
@@ -106,10 +106,10 @@ package org.robotlegs.base
 		 */
 		public function unmapEvent(eventType:String, commandClass:Class, eventClass:Class = null):void
 		{
-			var eventClassMap:Dictionary = eventTypeMap[eventType];
+			var eventClassMap:Object = eventTypeMap[eventType];
 			if (eventClassMap == null) return;
 			
-			var callbacksByCommandClass:Dictionary = eventClassMap[eventClass || Event];
+			var callbacksByCommandClass:Object = eventClassMap[eventClass || Event];
 			if (callbacksByCommandClass == null) return;
 			
 			var callback:Function = callbacksByCommandClass[commandClass];
@@ -126,8 +126,8 @@ package org.robotlegs.base
 		{
 			for (var eventType:String in eventTypeMap)
 			{
-				var eventClassMap:Dictionary = eventTypeMap[eventType];
-				for each (var callbacksByCommandClass:Dictionary in eventClassMap)
+				var eventClassMap:Object = eventTypeMap[eventType];
+				for each (var callbacksByCommandClass:Object in eventClassMap)
 				{
 					for each ( var callback:Function in callbacksByCommandClass)
 					{
@@ -135,7 +135,7 @@ package org.robotlegs.base
 					}
 				}
 			}
-			eventTypeMap = new Dictionary(false);
+			eventTypeMap = {};
 		}
 		
 		/**
@@ -143,10 +143,10 @@ package org.robotlegs.base
 		 */
 		public function hasEventCommand(eventType:String, commandClass:Class, eventClass:Class = null):Boolean
 		{
-			var eventClassMap:Dictionary = eventTypeMap[eventType];
+			var eventClassMap:Object = eventTypeMap[eventType];
 			if (eventClassMap == null) return false;
 			
-			var callbacksByCommandClass:Dictionary = eventClassMap[eventClass || Event];
+			var callbacksByCommandClass:Object = eventClassMap[eventClass || Event];
 			if (callbacksByCommandClass == null) return false;
 			
 			return callbacksByCommandClass[commandClass] != null;

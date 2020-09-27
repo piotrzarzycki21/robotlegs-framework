@@ -7,7 +7,7 @@
 
 package org.robotlegs.core
 {
-	import flash.events.IEventDispatcher;
+	import org.apache.royale.events.IEventDispatcher;
 	
 	/**
 	 * The Robotlegs Context contract

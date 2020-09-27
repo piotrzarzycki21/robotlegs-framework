@@ -7,7 +7,7 @@
 
 package org.robotlegs.base
 {
-	import flash.events.Event;
+	import org.apache.royale.events.Event;
 	
 	/**
 	 * A framework Event implementation
@@ -44,8 +44,8 @@ package org.robotlegs.base
 		{
 			return _body;
 		}
-		
-		override public function clone():Event
+
+		override public function cloneEvent():Event
 		{
 			return new ContextEvent(type, body);
 		}

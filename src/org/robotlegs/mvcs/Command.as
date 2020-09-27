@@ -8,8 +8,8 @@
 package org.robotlegs.mvcs
 {
 	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
+	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;
 	
 	import org.robotlegs.core.ICommandMap;
 	import org.robotlegs.core.IInjector;

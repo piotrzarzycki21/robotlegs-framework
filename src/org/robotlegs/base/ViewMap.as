@@ -9,9 +9,10 @@ package org.robotlegs.base
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
+	COMPILE::SWF { import flash.utils.Dictionary; }
+
+	import org.apache.royale.events.Event;
+	import org.apache.royale.reflection.getQualifiedClassName;
 
 	import org.robotlegs.core.IInjector;
 	import org.robotlegs.core.IViewMap;
@@ -29,12 +30,19 @@ package org.robotlegs.base
 		/**
 		 * @private
 		 */
-		protected var mappedTypes:Dictionary;
+		protected var mappedTypes:Object;
 
 		/**
 		 * @private
 		 */
+		COMPILE::SWF
 		protected var injectedViews:Dictionary;
+
+		/**
+		 * @private
+		 */
+		COMPILE::JS
+		protected var injectedViews:WeakMap;
 
 		//---------------------------------------------------------------------
 		// Constructor
@@ -51,9 +59,16 @@ package org.robotlegs.base
 			super(contextView, injector);
 
 			// mappings - if you can do it with fewer dictionaries you get a prize
-			this.mappedPackages = new Array();
-			this.mappedTypes = new Dictionary(false);
-			this.injectedViews = new Dictionary(true);
+			this.mappedPackages = [];
+			this.mappedTypes = {};
+
+			COMPILE::SWF {
+				this.injectedViews = new Dictionary(true);
+			}
+
+			COMPILE::JS {
+				this.injectedViews = new WeakMap();
+			}
 		}
 
 		//---------------------------------------------------------------------
@@ -149,7 +164,7 @@ package org.robotlegs.base
 		protected override function addListeners():void
 		{
 			if (contextView && enabled)
-				contextView.addEventListener(Event.ADDED_TO_STAGE, onViewAdded, useCapture, 0, true);
+				contextView.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture, 0, true);
 		}
 
 		/**
@@ -158,7 +173,7 @@ package org.robotlegs.base
 		protected override function removeListeners():void
 		{
 			if (contextView)
-				contextView.removeEventListener(Event.ADDED_TO_STAGE, onViewAdded, useCapture);
+				contextView.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture);
 		}
 
 		/**

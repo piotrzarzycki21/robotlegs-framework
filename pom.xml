@@ -9,11 +9,11 @@
         swiftsuspenders project isn't available in a maven repository at this time.
     -->
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.robotlegs</groupId>
+    <groupId>org.robotlegs.royale</groupId>
     <artifactId>robotlegs-framework</artifactId>
-    <version>1.3.0</version>
+    <version>1.5.3</version>
 	<packaging>swc</packaging>
-    <name>Robotlegs Framework</name>
+    <name>Robotlegs Framework Royale</name>
     <description>Robotlegs is a pure AS3 micro-architecture (framework) with a light footprint and limited scope. Simply put, Robotlegs is there to help you wire your objects together. It provides the glue that your application needs to easily function in a decoupled way. Through the use of automated metadata based dependency injection Robotlegs removes boilerplate code in an application. By promoting loose coupling and avoiding the use of Singletons and statics in the framework Robotlegs can help you write code that is highly testable.</description>
     <url>http://www.robotlegs.org</url>
     <licenses>
@@ -71,7 +71,7 @@
     </repositories>
 
     <properties>
-        <flex.debug>true</flex.debug>
+       <!-- <flex.debug>true</flex.debug>
 		<flex.skipTests>false</flex.skipTests>
 
         <maven.version>2.0.9</maven.version>
@@ -79,7 +79,57 @@
 		<flashplayer.version>10.0.0</flashplayer.version>
         <flexmojos.compiler.version>3.5.0</flexmojos.compiler.version>
         <flexunit.version>4.0-beta-2</flexunit.version>
-        <swiftsuspenders.version>1.0.1</swiftsuspenders.version>
+        <swiftsuspenders.version>1.0.1</swiftsuspenders.version>-->
+
+        <maven.version>3.6.3</maven.version>
+
+        <swiftsuspenders.version>1.6.1</swiftsuspenders.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <skipRat>false</skipRat>
+        <!-- Coding has made no assumption about SWF target -->
+        <royale.targets>SWF,JSRoyale</royale.targets>
+        <royale.skipAS>false</royale.skipAS>
+        <royale.debug>true</royale.debug>
+
+        <!-- Royale Library versions -->
+        <royale.develop>0.9.8-SNAPSHOT</royale.develop>
+        <royale.release>0.9.8-SNAPSHOT</royale.release>
+        <royale.version>0.9.8-SNAPSHOT</royale.version>
+
+        <player.version>20.0</player.version>
+        <flash.version>20.0</flash.version>
+        <air.version>20.0</air.version>
+
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputencoding>UTF-8</project.reporting.outputencoding>
+        <maven.version>3.5.4</maven.version>
+
+        <royale.framework.version>${royale.version}</royale.framework.version>
+        <royale.compiler.version>${royale.version}</royale.compiler.version>
+        <royale.typedefs.version>${royale.version}</royale.typedefs.version>
+        <royale.build-tools.version>1.2.0</royale.build-tools.version>
+
+        <royale.sourceMapSettings>-source-map=false;</royale.sourceMapSettings>
+        <royale.jsDefaultInitializers>-js-default-initializers=true;</royale.jsDefaultInitializers>
+
+        <royale.keepAS3MetaData>-keep-as3-metadata+=
+            Inject,
+            PostConstruct,
+            PreDestroy;
+        </royale.keepAS3MetaData>
+        <royale.includedFiles>-include-file+=
+            metadata.xml\,${project.basedir}/src/metadata.xml;
+        </royale.includedFiles>
+
+        <royale.flex.config>
+            ${royale.sourceMapSettings}
+            ${royale.jsDefaultInitializers}
+            ${royale.keepAS3MetaData}
+            ${royale.includedFiles}
+        </royale.flex.config>
     </properties>
 
     <prerequisites>
@@ -107,86 +157,154 @@
         <testSourceDirectory>test</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.flexmojos</groupId>
-                <artifactId>flexmojos-maven-plugin</artifactId>
-                <version>${flexmojos.compiler.version}</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <output>target/${project.name.versioned}.${project.packaging}</output>
-                        <skipTest>${flex.skipTests}</skipTest>
-                        <debug>${flex.debug}</debug>
-                        <ignoreVersionIssues>true</ignoreVersionIssues>
-                        <!--<targetPlayer>${flashplayer.version}</targetPlayer>-->
-                        <allowSourcePathOverlap>true</allowSourcePathOverlap>
-                        <includeSources>${project.sourceDirectory}</includeSources>
-                        <keepAs3Metadatas>
-                            <keepAs3Metadata>Inject</keepAs3Metadata>
-                            <keepAs3Metadata>PostConstruct</keepAs3Metadata>
-                        </keepAs3Metadatas>
-                        <incremental>true</incremental>
-                        <staticLinkRuntimeSharedLibraries>true</staticLinkRuntimeSharedLibraries>
-                        <verboseStacktraces>true</verboseStacktraces>
-                        <headlessServer>true</headlessServer>
-                        <configurationReport>true</configurationReport>
-                        <includeTestFiles>
-                            <includeTestFile>org/robotlegs/base/*Tests.as</includeTestFile>
-                            <includeTestFile>org/robotlegs/mvcs/*Tests.as</includeTestFile>
-                            <includeTestFile>org/robotlegs/mvcs/xmlconfig/*Tests.as</includeTestFile>
-                        </includeTestFiles>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.adobe.flex</groupId>
-                            <artifactId>compiler</artifactId>
-                            <version>${flex.version}</version>
-                            <type>pom</type>
-                        </dependency>
-                    </dependencies>
+                <extensions>true</extensions>
+                <groupId>org.apache.royale.compiler</groupId>
+                <artifactId>royale-maven-plugin</artifactId>
+                <version>${royale.compiler.version}</version>
+                <configuration>
+                    <forceSwcExternalLibraryPath>false</forceSwcExternalLibraryPath>
+                    <allowSubclassOverrides>true</allowSubclassOverrides>
+                    <targetPlayer>${player.version}</targetPlayer>
+                    <targets>${royale.targets}</targets>
+                    <debug>${royale.debug}</debug>
+                    <skipExtern>true</skipExtern>
+                    <skipAS>${royale.skipAS}</skipAS>
+                    <includeClasses>
+                        <includeClass>RobotLegsClasses</includeClass>
+                    </includeClasses>
+                    <includeLookupOnly>true</includeLookupOnly>
+                    <additionalCompilerOptions>
+                        ${royale.flex.config}
+                    </additionalCompilerOptions>
+                    <!--<includeFiles>
+                        <includeFile>metadata.xml</includeFile>
+                        &lt;!&ndash;<include>manifest.xml</include>
+                        <include>design.xml</include>&ndash;&gt;
+                    </includeFiles>-->
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.royale.compiler</groupId>
+                        <artifactId>compiler-jx</artifactId>
+                        <version>${royale.compiler.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-1</version>
-                <executions>
-                  <execution>
-                    <phase>initialize</phase>
-                    <goals>
-                      <goal>read-project-properties</goal>
-                    </goals>
-                    <configuration>
-                      <files>
-                        <file>${basedir}/build.properties</file>
-                      </files>
-                    </configuration>
-                  </execution>
-                </executions>
-            </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
-				
-			</plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>properties-maven-plugin</artifactId>
             <version>1.0-alpha-1</version>
+        </dependency>-->
+
+        <!-- Flash dependencies -->
+        <dependency>
+            <groupId>com.adobe.air.framework</groupId>
+            <artifactId>airglobal</artifactId>
+            <version>${air.version}</version>
+            <type>swc</type>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Third Party Dependencies -->
-        <dependency>
+     <!--   <dependency>
             <groupId>org.swiftsuspenders</groupId>
             <artifactId>swiftsuspenders</artifactId>
             <version>${swiftsuspenders.version}</version>
             <type>swc</type>
+        </dependency>-->
+        <dependency>
+            <groupId>org.swiftsuspenders.royale</groupId>
+            <artifactId>swiftsuspenders</artifactId>
+            <version>${swiftsuspenders.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>compile</scope>
         </dependency>
 
+        <!--Apache Royale dependencies -->
+        <dependency>
+            <groupId>org.apache.royale.typedefs</groupId>
+            <artifactId>royale-typedefs-gcl</artifactId>
+            <version>${royale.typedefs.version}</version>
+            <type>swc</type>
+            <classifier>typedefs</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.royale.typedefs</groupId>
+            <artifactId>royale-typedefs-js</artifactId>
+            <version>${royale.typedefs.version}</version>
+            <type>swc</type>
+            <classifier>typedefs</classifier>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Core</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Core</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>swf</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Language</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Reflection</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Reflection</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>swf</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Binding</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>Binding</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>swf</classifier>
+            <scope>provided</scope>
+        </dependency>
         <!-- Flex SDK Dependencies -->
-		<dependency>
+		<!--<dependency>
             <groupId>com.adobe.flex.framework</groupId>
             <artifactId>playerglobal</artifactId>
             <version>${flex.version}</version>
@@ -218,16 +336,16 @@
             <version>${flex.version}</version>
             <type>swc</type>
         </dependency>
-		
+		-->
         <!-- Testing Dependencies -->
         <!-- group/artifactId used b/c flexmojos requires this format: https://docs.sonatype.org/display/FLEXMOJOS/Unit+test+frameworks+GAV -->
-        <dependency>
+       <!-- <dependency>
             <groupId>com.adobe.flexunit</groupId>
             <artifactId>flexunit</artifactId>
             <version>${flexunit.version}</version>
             <type>swc</type>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 </project>

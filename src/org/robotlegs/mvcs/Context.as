@@ -8,10 +8,11 @@
 package org.robotlegs.mvcs
 {
 	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.system.ApplicationDomain;
-	
+
+	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;
+
 	import org.robotlegs.adapters.SwiftSuspendersInjector;
 	import org.robotlegs.adapters.SwiftSuspendersReflector;
 	import org.robotlegs.base.CommandMap;
@@ -303,7 +304,7 @@ package org.robotlegs.mvcs
 		{
 			if (_autoStartup && contextView)
 			{
-				contextView.stage ? startup() : contextView.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0, true);
+				contextView.stage ? startup() : contextView.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage, false, 0, true);
 			}
 		}
 		
@@ -312,7 +313,7 @@ package org.robotlegs.mvcs
 		 */
 		protected function onAddedToStage(e:Event):void
 		{
-			contextView.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			contextView.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage);
 			startup();
 		}
 		

@@ -7,8 +7,8 @@
 
 package org.robotlegs.mvcs
 {
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
+	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;;
 	
 	import org.robotlegs.base.EventMap;
 	import org.robotlegs.core.IEventMap;
