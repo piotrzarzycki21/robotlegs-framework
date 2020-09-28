@@ -80,7 +80,7 @@ package org.robotlegs.base
 		 * @param priority
 		 * @param useWeakReference
 		 */
-		public function mapListener(dispatcher:IEventDispatcher, type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void
+		public function mapListener(dispatcher:IEventDispatcher, type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false/*, priority:int = 0, useWeakReference:Boolean = true*/):void
 		{
 			if (dispatcherListeningEnabled == false && dispatcher == eventDispatcher)
 			{
@@ -93,11 +93,11 @@ package org.robotlegs.base
 			while (i--)
 			{
 				params = listeners[i];
-				if (params.dispatcher == dispatcher
-					&& params.type == type
-					&& params.listener == listener
-					&& params.useCapture == useCapture
-					&& params.eventClass == eventClass)
+				if (params['dispatcher'] == dispatcher
+					&& params['type'] == type
+					&& params['listener'] == listener
+					&& params['useCapture'] == useCapture
+					&& params['eventClass'] == eventClass)
 				{
 					return;
 				}
@@ -108,15 +108,15 @@ package org.robotlegs.base
 					routeEventToListener(event, listener, eventClass);
 				};
 			params = {
-					dispatcher: dispatcher,
-					type: type,
-					listener: listener,
-					eventClass: eventClass,
-					callback: callback,
-					useCapture: useCapture
+					'dispatcher': dispatcher,
+					'type': type,
+					'listener': listener,
+					'eventClass': eventClass,
+					'callback': callback,
+					'useCapture': useCapture
 				};
 			listeners.push(params);
-			dispatcher.addEventListener(type, callback, useCapture, priority, useWeakReference);
+			dispatcher.addEventListener(type, callback, useCapture/*, priority, useWeakReference*/);
 		}
 		
 		/**
@@ -137,11 +137,11 @@ package org.robotlegs.base
 			while (i--)
 			{
 				params = listeners[i];
-				if (params.dispatcher == dispatcher
-					&& params.type == type
-					&& params.listener == listener
-					&& params.useCapture == useCapture
-					&& params.eventClass == eventClass)
+				if (params['dispatcher'] == dispatcher
+						&& params['type'] == type
+						&& params['listener'] == listener
+						&& params['useCapture'] == useCapture
+						&& params['eventClass'] == eventClass)
 				{
 					dispatcher.removeEventListener(type, params.callback, useCapture);
 					listeners.splice(i, 1);
@@ -157,10 +157,10 @@ package org.robotlegs.base
 		{
 			var params:Object;
 			var dispatcher:IEventDispatcher;
-			while (params = listeners.pop())
+			while ((params = listeners.pop()) != null)
 			{
-				dispatcher = params.dispatcher;
-				dispatcher.removeEventListener(params.type, params.callback, params.useCapture);
+				dispatcher = params['dispatcher'];
+				dispatcher.removeEventListener(params['type'], params['callback'], params['useCapture']);
 			}
 		}
 		

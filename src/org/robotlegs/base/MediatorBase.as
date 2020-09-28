@@ -69,7 +69,7 @@ package org.robotlegs.base
 			
 			if (flexAvailable && (viewComponent is UIComponentClass) && !viewComponent['initialized'])
 			{
-				IEventDispatcher(viewComponent).addEventListener('creationComplete', onCreationComplete, false, 0, true);
+				IEventDispatcher(viewComponent).addEventListener('creationComplete', onCreationComplete, false/*, 0, true*/);
 			}
 			else
 			{

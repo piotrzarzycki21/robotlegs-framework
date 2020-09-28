@@ -7,7 +7,7 @@
 
 package org.robotlegs.mvcs
 {
-	import flash.display.DisplayObjectContainer;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
 	import org.apache.royale.events.Event;
 	import org.apache.royale.events.IEventDispatcher;
 	

@@ -26,7 +26,7 @@ package org.robotlegs.core
 		 * @param priority
 		 * @param useWeakReference
 		 */
-		function mapListener(dispatcher:IEventDispatcher, type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void;
+		function mapListener(dispatcher:IEventDispatcher, type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false/*, priority:int = 0, useWeakReference:Boolean = true*/):void;
 		
 		/**
 		 * The same as calling <code>removeEventListener</code> directly on the <code>IEventDispatcher</code>,

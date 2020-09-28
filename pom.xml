@@ -190,6 +190,12 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <!-- including this is only to get Intellij intellisense to work -->
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>7.1.1</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -210,18 +216,20 @@
         </dependency>
 
         <!-- Third Party Dependencies -->
-     <!--   <dependency>
-            <groupId>org.swiftsuspenders</groupId>
-            <artifactId>swiftsuspenders</artifactId>
-            <version>${swiftsuspenders.version}</version>
-            <type>swc</type>
-        </dependency>-->
         <dependency>
             <groupId>org.swiftsuspenders.royale</groupId>
             <artifactId>swiftsuspenders</artifactId>
             <version>${swiftsuspenders.version}</version>
             <type>swc</type>
             <classifier>js</classifier>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.swiftsuspenders.royale</groupId>
+            <artifactId>swiftsuspenders</artifactId>
+            <version>${swiftsuspenders.version}</version>
+            <type>swc</type>
+            <classifier>swf</classifier>
             <scope>compile</scope>
         </dependency>
 
@@ -346,6 +354,10 @@
             <type>swc</type>
             <scope>test</scope>
         </dependency>-->
-
+        <dependency>
+            <groupId>net.flexmojos.oss</groupId>
+            <artifactId>flexmojos-maven-plugin</artifactId>
+            <version>7.1.1</version>
+        </dependency>
     </dependencies>
 </project>

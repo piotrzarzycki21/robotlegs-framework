@@ -7,11 +7,17 @@
 
 package org.robotlegs.mvcs
 {
-	import flash.display.DisplayObjectContainer;
-	import flash.system.ApplicationDomain;
+
+COMPILE::SWF{
+	import FlashDisplayObject=flash.display.DisplayObject;
+}
+
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
+//	import flash.system.ApplicationDomain;
 
 	import org.apache.royale.events.Event;
 	import org.apache.royale.events.IEventDispatcher;
+	import org.apache.royale.core.IUIBase;
 
 	import org.robotlegs.adapters.SwiftSuspendersInjector;
 	import org.robotlegs.adapters.SwiftSuspendersReflector;
@@ -304,7 +310,19 @@ package org.robotlegs.mvcs
 		{
 			if (_autoStartup && contextView)
 			{
-				contextView.stage ? startup() : contextView.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage, false, 0, true);
+				COMPILE::SWF{
+					const onStage:Boolean = FlashDisplayObject(contextView).stage != null;
+				}
+				COMPILE::JS{
+					const onStage:Boolean = document.body.contains(IUIBase(_contextView).element);
+				}
+
+				if (onStage ){
+					startup()
+				} else {
+					var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+					contextViewDispatcher.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage, false/*, 0, true*/);
+				}
 			}
 		}
 		
@@ -313,7 +331,8 @@ package org.robotlegs.mvcs
 		 */
 		protected function onAddedToStage(e:Event):void
 		{
-			contextView.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage);
+			var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+			contextViewDispatcher.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onAddedToStage);
 			startup();
 		}
 		
@@ -323,7 +342,7 @@ package org.robotlegs.mvcs
 		protected function createInjector():IInjector
 		{
 			var injector:IInjector = new SwiftSuspendersInjector();
-			injector.applicationDomain = getApplicationDomainFromContextView();
+		//	injector.applicationDomain = getApplicationDomainFromContextView();
 			return injector;
 		}
 		
@@ -332,18 +351,18 @@ package org.robotlegs.mvcs
 		 */
 		protected function createChildInjector():IInjector
 		{
-			return injector.createChild(getApplicationDomainFromContextView());
+			return injector.createChild(/*getApplicationDomainFromContextView()*/);
 		}
 		
 		/**
 		 * @private
 		 */
-		protected function getApplicationDomainFromContextView():ApplicationDomain
+		/*protected function getApplicationDomainFromContextView():ApplicationDomain
 		{
 			if (contextView && contextView.loaderInfo)
 				return contextView.loaderInfo.applicationDomain;
 			return ApplicationDomain.currentDomain;
-		}
+		}*/
 	
 	}
 }

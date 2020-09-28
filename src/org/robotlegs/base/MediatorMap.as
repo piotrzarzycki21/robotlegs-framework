@@ -7,13 +7,19 @@
 
 package org.robotlegs.base
 {
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
+	import DisplayObject=org.apache.royale.core.IUIBase;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
+	import org.apache.royale.debugging.throwError;
 
-	COMPILE::SWF { import flash.utils.Dictionary; }
+
+	COMPILE::SWF {
+		import flash.display.Sprite;
+		import flash.utils.Dictionary;
+		import FlashDisplayObject=flash.display.DisplayObject;
+	}
 
 	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;
 	import org.apache.royale.reflection.getQualifiedClassName;
 	
 	import org.robotlegs.core.IInjector;
@@ -29,6 +35,7 @@ package org.robotlegs.base
 		/**
 		 * @private
 		 */
+		COMPILE::SWF
 		protected static const enterFrameDispatcher:Sprite = new Sprite();
 
 		/**
@@ -63,7 +70,16 @@ package org.robotlegs.base
 		/**
 		 * @private
 		 */
-		protected var mediatorsMarkedForRemoval:Object;
+		COMPILE::SWF
+		protected var mediatorsMarkedForRemoval:Dictionary;
+
+		/**
+		 * @private
+		 */
+		COMPILE::JS
+		protected var mediatorsMarkedForRemoval:Map;
+
+
 		
 		/**
 		 * @private
@@ -97,15 +113,18 @@ package org.robotlegs.base
 			COMPILE::SWF {
 				this.mediatorByView = new Dictionary(true);
 				this.mappingConfigByView = new Dictionary(true);
+				this.mediatorsMarkedForRemoval =  new Dictionary(false);
 			}
 
 			COMPILE::JS {
 				this.mediatorByView = new WeakMap();
 				this.mappingConfigByView = new WeakMap();
+				this.mediatorsMarkedForRemoval = new Map();
+
 			}
 
 			this.mappingConfigByViewClassName = {};
-			this.mediatorsMarkedForRemoval = {};
+		//	this.mediatorsMarkedForRemoval = {};
 		}
 		
 		//---------------------------------------------------------------------
@@ -190,8 +209,15 @@ package org.robotlegs.base
 			var mediatorClass:Class = reflector.getClass(mediator);
 			injector.hasMapping(mediatorClass) && injector.unmap(mediatorClass);
 			injector.mapValue(mediatorClass, mediator);
-			mediatorByView[viewComponent] = mediator;
-			mappingConfigByView[viewComponent] = mappingConfigByViewClassName[getQualifiedClassName(viewComponent)];
+			COMPILE::SWF{
+				mediatorByView[viewComponent] = mediator;
+				mappingConfigByView[viewComponent] = mappingConfigByViewClassName[getQualifiedClassName(viewComponent)];
+			}
+			COMPILE::JS{
+				mediatorByView.set(viewComponent, mediator);
+				mappingConfigByView.set(viewComponent, mappingConfigByViewClassName[getQualifiedClassName(viewComponent)]);
+			}
+
 			mediator.setViewComponent(viewComponent);
 			mediator.preRegister();
 		}
@@ -205,8 +231,14 @@ package org.robotlegs.base
 			{
 				var viewComponent:Object = mediator.getViewComponent();
 				var mediatorClass:Class = reflector.getClass(mediator);
-				delete mediatorByView[viewComponent];
-				delete mappingConfigByView[viewComponent];
+				COMPILE::SWF{
+					delete mediatorByView[viewComponent];
+					delete mappingConfigByView[viewComponent];
+				}
+				COMPILE::JS{
+					mediatorByView.delete(viewComponent);
+					mappingConfigByView.delete(viewComponent);
+				}
 				mediator.preRemove();
 				mediator.setViewComponent(null);
 				injector.hasMapping(mediatorClass) && injector.unmap(mediatorClass);
@@ -227,7 +259,12 @@ package org.robotlegs.base
 		 */
 		public function retrieveMediator(viewComponent:Object):IMediator
 		{
-			return mediatorByView[viewComponent];
+			COMPILE::SWF{
+				return mediatorByView[viewComponent];
+			}
+			COMPILE::JS{
+				return mediatorByView.get(viewComponent);
+			}
 		}
 		
 		/**
@@ -244,7 +281,12 @@ package org.robotlegs.base
 		 */
 		public function hasMediatorForView(viewComponent:Object):Boolean
 		{
-			return mediatorByView[viewComponent] != null;
+			COMPILE::SWF{
+				return mediatorByView[viewComponent] != null;
+			}
+			COMPILE::JS{
+				return mediatorByView.has(viewComponent);
+			}
 		}
 		
 		/**
@@ -252,10 +294,17 @@ package org.robotlegs.base
 		 */
 		public function hasMediator(mediator:IMediator):Boolean
 		{
-			for each (var med:IMediator in mediatorByView)
-				if (med == mediator)
-					return true;
-			return false;
+			COMPILE::SWF{
+				for each (var med:IMediator in mediatorByView)
+					if (med == mediator)
+						return true;
+				return false;
+			}
+			COMPILE::JS{
+				throwError('js needs refactor to use Map instead of WeakMap');
+				return false
+			}
+
 		}
 		
 		//---------------------------------------------------------------------
@@ -269,8 +318,9 @@ package org.robotlegs.base
 		{
 			if (contextView && enabled)
 			{
-				contextView.addEventListener("addedToStage"/*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture, 0, true);
-				contextView.addEventListener("removedFromStage" /*Event.REMOVED_FROM_STAGE*/, onViewRemoved, useCapture, 0, true);
+				var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+				contextViewDispatcher.addEventListener("addedToStage"/*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture/*, 0, true*/);
+				contextViewDispatcher.addEventListener("removedFromStage" /*Event.REMOVED_FROM_STAGE*/, onViewRemoved, useCapture/*, 0, true*/);
 			}
 		}
 		
@@ -281,8 +331,9 @@ package org.robotlegs.base
 		{
 			if (contextView)
 			{
-				contextView.removeEventListener("addedToStage"/*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture);
-				contextView.removeEventListener("removedFromStage" /*Event.REMOVED_FROM_STAGE*/, onViewRemoved, useCapture);
+				var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+				contextViewDispatcher.removeEventListener("addedToStage"/*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture);
+				contextViewDispatcher.removeEventListener("removedFromStage" /*Event.REMOVED_FROM_STAGE*/, onViewRemoved, useCapture);
 			}
 		}
 		
@@ -291,11 +342,22 @@ package org.robotlegs.base
 		 */		
 		protected override function onViewAdded(e:Event):void
 		{
-			if (mediatorsMarkedForRemoval[e.target])
-			{
-				delete mediatorsMarkedForRemoval[e.target];
-				return;
+			COMPILE::SWF{
+				if (mediatorsMarkedForRemoval[e.target])
+				{
+					delete mediatorsMarkedForRemoval[e.target];
+					return;
+				}
 			}
+			COMPILE::JS{
+				if (mediatorsMarkedForRemoval.has(e.target))
+				{
+					 mediatorsMarkedForRemoval.delete(e.target);
+					return;
+				}
+			}
+
+
 			var viewClassName:String = getQualifiedClassName(e.target);
 			var config:MappingConfig = mappingConfigByViewClassName[viewClassName];
 			if (config && config.autoCreate)
@@ -307,7 +369,14 @@ package org.robotlegs.base
 		 */		
 		protected function createMediatorUsing(viewComponent:Object, viewClassName:String = '', config:MappingConfig = null):IMediator
 		{
-			var mediator:IMediator = mediatorByView[viewComponent];
+			var mediator:IMediator;
+			COMPILE::SWF{
+				mediator = mediatorByView[viewComponent];
+			}
+			COMPILE::JS{
+				mediator = mediatorByView.get(viewComponent);
+			}
+
 			if (mediator == null)
 			{
 				viewClassName ||= getQualifiedClassName(viewComponent);
@@ -334,14 +403,27 @@ package org.robotlegs.base
 		 */
 		protected function onViewRemoved(e:Event):void
 		{
-			var config:MappingConfig = mappingConfigByView[e.target];
+			var config:MappingConfig;
+			COMPILE::SWF{
+				config = mappingConfigByView[e.target];
+			}
+			COMPILE::JS{
+				config = mappingConfigByView.get(e.target);
+			}
+
 			if (config && config.autoRemove)
 			{
 				mediatorsMarkedForRemoval[e.target] = e.target;
 				if (!hasMediatorsMarkedForRemoval)
 				{
 					hasMediatorsMarkedForRemoval = true;
-					enterFrameDispatcher.addEventListener("enterFrame" /*Event.ENTER_FRAME*/, removeMediatorLater);
+					COMPILE::SWF{
+						enterFrameDispatcher.addEventListener("enterFrame" /*Event.ENTER_FRAME*/, removeMediatorLater);
+					}
+					COMPILE::JS{
+						requestAnimationFrame(removeMediatorLater);
+					}
+
 				}
 			}
 		}
@@ -351,14 +433,28 @@ package org.robotlegs.base
 		 */
 		protected function removeMediatorLater(event:Event):void
 		{
-			enterFrameDispatcher.removeEventListener("enterFrame" /*Event.ENTER_FRAME*/, removeMediatorLater);
+			COMPILE::SWF{
+				enterFrameDispatcher.removeEventListener("enterFrame" /*Event.ENTER_FRAME*/, removeMediatorLater);
+			}
+
 			for each (var view:DisplayObject in mediatorsMarkedForRemoval)
 			{
-				if (!view.stage)
+				if (!isOnStage(view))
 					removeMediatorByView(view);
 				delete mediatorsMarkedForRemoval[view];
 			}
 			hasMediatorsMarkedForRemoval = false;
+		}
+
+
+		private function isOnStage(view:DisplayObject):Boolean{
+			COMPILE::SWF{
+				return FlashDisplayObject(view).stage != null;
+			}
+
+			COMPILE::JS{
+				return document.body.contains(view.element);
+			}
 		}
 	}
 }

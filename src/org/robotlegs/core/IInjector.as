@@ -7,7 +7,7 @@
 
 package org.robotlegs.core
 {
-    import flash.system.ApplicationDomain;
+    //import flash.system.ApplicationDomain;
 	
 	/**
 	 * The Robotlegs Injector contract
@@ -130,7 +130,7 @@ package org.robotlegs.core
 		 * 
 		 * @return The injector 
 		 */		
-		function createChild(applicationDomain:ApplicationDomain = null):IInjector;
+		function createChild(/*applicationDomain:ApplicationDomain = null*/):IInjector;
 		
 		/**
 		 * Remove a rule from the injector
@@ -149,15 +149,15 @@ package org.robotlegs.core
 		 */		
 		function hasMapping(clazz:Class, named:String = ""):Boolean;
 		
-		/**
+		/*/!**
 		 * @return The Application Domain
-		 */		
+		 *!/
 		function get applicationDomain():ApplicationDomain;
 		
-		/**
+		/!**
 		 * @param value The Application Domain
-		 */		
-		function set applicationDomain(value:ApplicationDomain):void;
+		 *!/
+		function set applicationDomain(value:ApplicationDomain):void;*/
 		
 	}
 }

@@ -52,14 +52,25 @@ package org.robotlegs.base
 		//---------------------------------------------------------------------
 		//  EventDispatcher Boilerplate
 		//---------------------------------------------------------------------
-		
+
 		/**
-		 * @private
+		 * @inheritDoc
 		 */
+		COMPILE::SWF
 		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			eventDispatcher.addEventListener(type, listener, useCapture, priority);
+			//	priority = flipPriority(type, priority);
+			//@todo deal with priority event listeners
+			eventDispatcher.addEventListener(type, listener, useCapture/*, priority, useWeakReference*/);
 		}
+		COMPILE::JS
+		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false,opt_handlerScope:Object = null):void
+		{
+			//	priority = flipPriority(type, priority);
+			//@todo deal with priority event listeners
+			eventDispatcher.addEventListener(type, listener, useCapture/*, priority, useWeakReference*/);
+		}
+
 		
 		/**
 		 * @private
@@ -78,11 +89,21 @@ package org.robotlegs.base
 		{
 			return eventDispatcher.hasEventListener(type);
 		}
-		
+
 		/**
-		 * @private
+		 * @inheritDoc
 		 */
+		COMPILE::SWF
 		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
+		{
+			eventDispatcher.removeEventListener(type, listener, useCapture);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		COMPILE::JS
+		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false,opt_handlerScope:Object = null):void
 		{
 			eventDispatcher.removeEventListener(type, listener, useCapture);
 		}
@@ -90,6 +111,7 @@ package org.robotlegs.base
 		/**
 		 * @private
 		 */
+		COMPILE::SWF
 		public function willTrigger(type:String):Boolean
 		{
 			return eventDispatcher.willTrigger(type);

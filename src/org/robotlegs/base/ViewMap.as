@@ -7,11 +7,12 @@
 
 package org.robotlegs.base
 {
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
+	import DisplayObject=org.apache.royale.core.IUIBase;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
 	COMPILE::SWF { import flash.utils.Dictionary; }
 
 	import org.apache.royale.events.Event;
+	import org.apache.royale.events.IEventDispatcher;
 	import org.apache.royale.reflection.getQualifiedClassName;
 
 	import org.robotlegs.core.IInjector;
@@ -120,7 +121,7 @@ package org.robotlegs.base
 
 			// This was a bad idea - causes unexpected eager instantiation of object graph 
 			if (contextView && (contextView is type))
-				injectInto(contextView);
+				injectInto(DisplayObject(contextView));
 		}
 
 		/**
@@ -163,8 +164,11 @@ package org.robotlegs.base
 		 */
 		protected override function addListeners():void
 		{
-			if (contextView && enabled)
-				contextView.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture, 0, true);
+			if (contextView && enabled) {
+				var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+				contextViewDispatcher.addEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture/*, 0, true*/);
+			}
+
 		}
 
 		/**
@@ -172,8 +176,11 @@ package org.robotlegs.base
 		 */
 		protected override function removeListeners():void
 		{
-			if (contextView)
-				contextView.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture);
+			if (contextView) {
+				var contextViewDispatcher:IEventDispatcher = IEventDispatcher(contextView);
+				contextViewDispatcher.removeEventListener("addedToStage" /*Event.ADDED_TO_STAGE*/, onViewAdded, useCapture);
+			}
+
 		}
 
 		/**

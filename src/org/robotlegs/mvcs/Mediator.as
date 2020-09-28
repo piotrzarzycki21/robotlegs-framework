@@ -7,7 +7,7 @@
 
 package org.robotlegs.mvcs
 {
-	import flash.display.DisplayObjectContainer;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
 	import org.apache.royale.events.Event;
 	import org.apache.royale.events.IEventDispatcher;
 	
@@ -101,10 +101,10 @@ package org.robotlegs.mvcs
 		 * @param useWeakReference
 		 * 
 		 */		
-		protected function addViewListener(type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void
+		protected function addViewListener(type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false/*, priority:int = 0, useWeakReference:Boolean = true*/):void
 		{
 			eventMap.mapListener(IEventDispatcher(viewComponent), type, listener, 
-				eventClass, useCapture, priority, useWeakReference); 
+				eventClass, useCapture/*, priority, useWeakReference*/);
 		}
 
         /**
@@ -134,10 +134,10 @@ package org.robotlegs.mvcs
 		 * @param useWeakReference
 		 * 
 		 */		
-		protected function addContextListener(type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void
+		protected function addContextListener(type:String, listener:Function, eventClass:Class = null, useCapture:Boolean = false/*, priority:int = 0, useWeakReference:Boolean = true*/):void
 	 	{
 			eventMap.mapListener(eventDispatcher, type, listener, 
-				eventClass, useCapture, priority, useWeakReference); 									   
+				eventClass, useCapture/*, priority, useWeakReference*/);
 		}
 
 		/**

@@ -7,7 +7,7 @@
 
 package org.robotlegs.core
 {
-	import flash.system.ApplicationDomain;
+	//import flash.system.ApplicationDomain;
 	
 	/**
 	 * The Robotlegs Reflector contract
@@ -23,7 +23,7 @@ package org.robotlegs.core
 		 * @param applicationDomain
 		 * @return Boolean
 		 */
-		function classExtendsOrImplements(classOrClassName:Object, superclass:Class, applicationDomain:ApplicationDomain = null):Boolean;
+		function classExtendsOrImplements(classOrClassName:Object, superclass:Class/*, applicationDomain:ApplicationDomain = null*/):Boolean;
 		
 		/**
 		 * Get the class of this instance
@@ -32,7 +32,7 @@ package org.robotlegs.core
 		 * @param applicationDomain
 		 * @return Class
 		 */
-		function getClass(value:*, applicationDomain:ApplicationDomain = null):Class
+		function getClass(value:*/*, applicationDomain:ApplicationDomain = null*/):Class
 		
 		/**
 		 * Get the Fully Qualified Class Name of this instance, class name, or class

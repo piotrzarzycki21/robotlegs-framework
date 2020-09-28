@@ -7,7 +7,7 @@
 
 package org.robotlegs.core
 {
-	import flash.display.DisplayObjectContainer;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
 	
 	/**
 	 * The Robotlegs ViewMap contract. All IViewMap automatic injections occur AFTER the view components are added to the stage.

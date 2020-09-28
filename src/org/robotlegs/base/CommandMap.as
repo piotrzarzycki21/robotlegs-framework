@@ -7,10 +7,18 @@
 
 package org.robotlegs.base
 {
+import org.apache.royale.reflection.TypeDefinition;
+import org.apache.royale.reflection.utils.getMembersWithNameMatch;
+
+COMPILE::SWF{
+		import flash.utils.Dictionary;
+	}
+
+
 	import org.apache.royale.events.Event;
 	import org.apache.royale.events.IEventDispatcher;
 
-	import flash.utils.describeType;
+	import org.apache.royale.reflection.describeType;
 	
 	import org.robotlegs.core.ICommandMap;
 	import org.robotlegs.core.IInjector;
@@ -48,10 +56,22 @@ package org.robotlegs.base
 		 *
 		 * Collection of command classes that have been verified to implement an <code>execute</code> method
 		 */
-		protected var verifiedCommandClasses:Object;
-		
-		protected var detainedCommands:Object;
-		
+		COMPILE::SWF
+		private const verifiedCommandClasses:Dictionary = new Dictionary();
+
+		COMPILE::JS
+		private const verifiedCommandClasses:Map = new Map();
+
+		//this could perhaps be implemented with a simple Array:
+		COMPILE::SWF
+		private const detainedCommands:Dictionary = new Dictionary();
+
+		COMPILE::JS
+		private const detainedCommands:Map = new Map();
+
+
+
+
 		//---------------------------------------------------------------------
 		//  Constructor
 		//---------------------------------------------------------------------
@@ -69,8 +89,9 @@ package org.robotlegs.base
 			this.injector = injector;
 			this.reflector = reflector;
 			this.eventTypeMap = {};
-			this.verifiedCommandClasses = {};
-			this.detainedCommands = {};
+			//the following were switched to declaration/assignment:
+			/*this.verifiedCommandClasses = {};
+			this.detainedCommands = {};*/
 		}
 		
 		//---------------------------------------------------------------------
@@ -97,7 +118,7 @@ package org.robotlegs.base
 			{
 				routeEventToCommand(event, commandClass, oneshot, eventClass);
 			};
-			eventDispatcher.addEventListener(eventType, callback, false, 0, true);
+			eventDispatcher.addEventListener(eventType, callback, false/*, 0, true*/);
 			callbacksByCommandClass[commandClass] = callback;
 		}
 		
@@ -208,10 +229,28 @@ package org.robotlegs.base
 		 */
 		protected function verifyCommandClass(commandClass:Class):void
 		{
-			if (!verifiedCommandClasses[commandClass])
+			var verfied:Boolean;
+			COMPILE::SWF{
+				verfied = verifiedCommandClasses[commandClass]
+			}
+			COMPILE::JS{
+				verfied = verifiedCommandClasses.get(commandClass)
+			}
+
+			if (!verfied)
 			{
-				verifiedCommandClasses[commandClass] = describeType(commandClass).factory.method.(@name == "execute").length();
-				if (!verifiedCommandClasses[commandClass])
+				var typeDef:TypeDefinition = describeType(commandClass);
+
+				var executeExists:Boolean = getMembersWithNameMatch(typeDef.methods,'execute').length > 0;
+
+				COMPILE::SWF{
+					verifiedCommandClasses[commandClass] = executeExists
+				}
+				COMPILE::JS{
+					verifiedCommandClasses.set(commandClass, executeExists)
+				}
+
+				if (!executeExists)
 					throw new ContextError(ContextError.E_COMMANDMAP_NOIMPL + ' - ' + commandClass);
 			}
 		}

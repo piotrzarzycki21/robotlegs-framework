@@ -12,7 +12,7 @@ obj/*
 .flexLibProperties
 .FlexUnitSettings
 .project
-
+.idea
 Icon
 Thumbs.db
 .DS_Store

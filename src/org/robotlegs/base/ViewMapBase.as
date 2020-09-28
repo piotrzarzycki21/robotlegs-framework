@@ -7,7 +7,8 @@
 
 package org.robotlegs.base
 {
-	import flash.display.DisplayObjectContainer;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
+
 	import org.apache.royale.events.Event;
 
 	import org.robotlegs.core.IInjector;

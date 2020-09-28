@@ -7,7 +7,7 @@
 
 package org.robotlegs.core
 {
-	import flash.display.DisplayObjectContainer;
+	import DisplayObjectContainer=org.apache.royale.core.IParent;
 	
 	/**
 	 * The Robotlegs MediatorMap contract
