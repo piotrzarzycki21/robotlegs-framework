@@ -9,7 +9,6 @@ package org.robotlegs.base
 {
 	import DisplayObject=org.apache.royale.core.IUIBase;
 	import DisplayObjectContainer=org.apache.royale.core.IParent;
-	import org.apache.royale.debugging.throwError;
 
 
 	COMPILE::SWF {
@@ -301,8 +300,10 @@ package org.robotlegs.base
 				return false;
 			}
 			COMPILE::JS{
-				throwError('js needs refactor to use Map instead of WeakMap');
-				return false
+				//WeakMap is not iterable, might need to convert to Map
+				//throw new Error('js needs refactor to use Map instead of WeakMap');
+				//trying this:
+				return mediatorByView.has(mediator.getViewComponent()) && mediatorByView.get(mediator.getViewComponent()) == mediator;
 			}
 
 		}
