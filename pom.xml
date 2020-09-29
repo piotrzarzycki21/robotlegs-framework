@@ -294,6 +294,14 @@
             <classifier>swf</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.royale.framework</groupId>
+            <artifactId>XML</artifactId>
+            <version>${royale.version}</version>
+            <type>swc</type>
+            <classifier>js</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.royale.framework</groupId>
