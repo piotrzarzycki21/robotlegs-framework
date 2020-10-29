@@ -19,24 +19,29 @@ package org.robotlegs.adapters
 	 */
 	public class SwiftSuspendersInjector extends Injector implements IInjector
 	{
-		protected static const XML_CONFIG:XML =
-			<types>
-				<type name='org.robotlegs.mvcs::Actor'>
-					<field name='eventDispatcher'/>
-				</type>
-				<type name='org.robotlegs.mvcs::Command'>
-					<field name='contextView'/>
-					<field name='mediatorMap'/>
-					<field name='eventDispatcher'/>
-					<field name='injector'/>
-					<field name='commandMap'/>
-				</type>
-				<type name='org.robotlegs.mvcs::Mediator'>
-					<field name='contextView'/>
-					<field name='mediatorMap'/>
-					<field name='eventDispatcher'/>
-				</type>
-			</types>;
+		private static var _XML_CONFIG:XML;
+		protected static function get XML_CONFIG() : XML {
+			if (!_XML_CONFIG) {
+				_XML_CONFIG =<types>
+					<type name='org.robotlegs.mvcs::Actor'>
+						<field name='eventDispatcher'/>
+					</type>
+					<type name='org.robotlegs.mvcs::Command'>
+						<field name='contextView'/>
+						<field name='mediatorMap'/>
+						<field name='eventDispatcher'/>
+						<field name='injector'/>
+						<field name='commandMap'/>
+					</type>
+					<type name='org.robotlegs.mvcs::Mediator'>
+						<field name='contextView'/>
+						<field name='mediatorMap'/>
+						<field name='eventDispatcher'/>
+					</type>
+				</types>;
+			}
+			return _XML_CONFIG;
+		}
 		
 		public function SwiftSuspendersInjector(xmlConfig:XML = null)
 		{
