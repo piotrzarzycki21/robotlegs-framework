@@ -118,7 +118,7 @@ package org.robotlegs.base
 			COMPILE::JS {
 				this.mediatorByView = new WeakMap();
 				this.mappingConfigByView = new WeakMap();
-				this.mediatorsMarkedForRemoval = new Map();
+				this.mediatorsMarkedForRemoval = [];
 
 			}
 
@@ -351,9 +351,10 @@ package org.robotlegs.base
 				}
 			}
 			COMPILE::JS{
-				if (mediatorsMarkedForRemoval.has(e.target))
+				var indexOf:int = mediatorsMarkedForRemoval.indexOf(e.target);
+				if (indexOf > -1)
 				{
-					 mediatorsMarkedForRemoval.delete(e.target);
+					 mediatorsMarkedForRemoval.splice(indexOf, 1);
 					return;
 				}
 			}
@@ -414,7 +415,18 @@ package org.robotlegs.base
 
 			if (config && config.autoRemove)
 			{
-				mediatorsMarkedForRemoval[e.target] = e.target;
+				COMPILE::SWF
+				{
+					mediatorsMarkedForRemoval[e.target] = e.target;
+				}
+
+				COMPILE::JS
+				{
+					if (mediatorsMarkedForRemoval.indexOf(e.target) < 0)
+					{
+						mediatorsMarkedForRemoval.push(e.target);
+					}
+				}
 				if (!hasMediatorsMarkedForRemoval)
 				{
 					hasMediatorsMarkedForRemoval = true;
@@ -437,12 +449,26 @@ package org.robotlegs.base
 			COMPILE::SWF{
 				enterFrameDispatcher.removeEventListener("enterFrame" /*Event.ENTER_FRAME*/, removeMediatorLater);
 			}
-
-			for each (var view:DisplayObject in mediatorsMarkedForRemoval)
+			COMPILE::SWF
 			{
-				if (!isOnStage(view))
-					removeMediatorByView(view);
-				delete mediatorsMarkedForRemoval[view];
+
+				for each (var view:DisplayObject in mediatorsMarkedForRemoval)
+				{
+					if (!isOnStage(view))
+						removeMediatorByView(view);
+					delete mediatorsMarkedForRemoval[view];
+				}
+			}
+
+			COMPILE::JS
+			{
+
+				while (mediatorsMarkedForRemoval.length > 0)
+				{
+					var view:DisplayObject = mediatorsMarkedForRemoval.pop() as DisplayObject;
+					if (!isOnStage(view))
+						removeMediatorByView(view);
+				}
 			}
 			hasMediatorsMarkedForRemoval = false;
 		}

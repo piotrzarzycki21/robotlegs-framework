@@ -189,9 +189,16 @@ package org.robotlegs.base
 		protected override function onViewAdded(e:Event):void
 		{
 			var target:DisplayObject = DisplayObject(e.target);
-			if (injectedViews[target])
-				return;
-
+			COMPILE::SWF
+			{
+				if (injectedViews[target])
+					return;
+			}
+			COMPILE::JS
+			{
+				if (injectedViews.get(target))
+					return;
+			}
 			for each (var type:Class in mappedTypes)
 			{
 				if (target is type)
@@ -220,7 +227,15 @@ package org.robotlegs.base
 		protected function injectInto(target:DisplayObject):void
 		{
 			injector.injectInto(target);
-			injectedViews[target] = true;
+			COMPILE::SWF
+			{
+				injectedViews[target] = true;
+			}
+			
+			COMPILE::JS
+			{
+				injectedViews.set(target, true);
+			}
 		}
 	}
 }
