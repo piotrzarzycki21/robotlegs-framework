@@ -118,12 +118,11 @@ package org.robotlegs.base
 			COMPILE::JS {
 				this.mediatorByView = new WeakMap();
 				this.mappingConfigByView = new WeakMap();
-				this.mediatorsMarkedForRemoval = [];
+				this.mediatorsMarkedForRemoval = new Map();
 
 			}
 
 			this.mappingConfigByViewClassName = {};
-		//	this.mediatorsMarkedForRemoval = {};
 		}
 		
 		//---------------------------------------------------------------------
@@ -351,10 +350,8 @@ package org.robotlegs.base
 				}
 			}
 			COMPILE::JS{
-				var indexOf:int = mediatorsMarkedForRemoval.indexOf(e.target);
-				if (indexOf > -1)
-				{
-					 mediatorsMarkedForRemoval.splice(indexOf, 1);
+				if (mediatorsMarkedForRemoval.has(e.target)) {
+					mediatorsMarkedForRemoval.delete(e.target);
 					return;
 				}
 			}
@@ -422,10 +419,7 @@ package org.robotlegs.base
 
 				COMPILE::JS
 				{
-					if (mediatorsMarkedForRemoval.indexOf(e.target) < 0)
-					{
-						mediatorsMarkedForRemoval.push(e.target);
-					}
+					mediatorsMarkedForRemoval.set(e.target, e.target);
 				}
 				if (!hasMediatorsMarkedForRemoval)
 				{
@@ -462,13 +456,15 @@ package org.robotlegs.base
 
 			COMPILE::JS
 			{
-
-				while (mediatorsMarkedForRemoval.length > 0)
-				{
-					var view:DisplayObject = mediatorsMarkedForRemoval.pop() as DisplayObject;
-					if (!isOnStage(view))
-						removeMediatorByView(view);
-				}
+				mediatorsMarkedForRemoval.forEach(
+						function(value:DisplayObject,view:DisplayObject,map:Map):void{
+							if (!isOnStage(view))
+								removeMediatorByView(view);
+							//instead of calling delete in here, we will simply call clear after this
+						}, this
+				)
+				//instead of calling delete on each one, we simply call clear here:
+				mediatorsMarkedForRemoval.clear();
 			}
 			hasMediatorsMarkedForRemoval = false;
 		}
